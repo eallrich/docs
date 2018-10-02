@@ -23,39 +23,45 @@ To share your local data between app and extensions you need to do the following
 
 *   Enable **App Groups** and **Keychain Sharing** in **both** your app and extension capabilities in Xcode.
     Please note, that App Group identifier and Keychain Group should be the same between your app and all extensions for data sharing to work.
-    ![]({{site.baseUrl}}/assets/images/extensions_capabilities.png)
+    <img alt="Configuring iOS extenstions" data-echo="{{ '/assets/images/extensions_capabilities.png' | prepend: site.baseurl }}"/>
 *   Add the following before you initialize Parse in your Main App:
 
-<pre><code class="objectivec">
+<div class="language-toggle" markdown="1">
+```objective_c
 // Enable data sharing in main app.
 [Parse enableDataSharingWithApplicationGroupIdentifier:@"group.com.parse.parseuidemo"];
 // Setup Parse
 [Parse setApplicationId:@"<ParseAppId>" clientKey:@"<ClientKey>"];
-</code></pre>
+```
 
-<pre><code class="swift">
+```swift
 // Enable data sharing in main app.
 Parse.enableDataSharingWithApplicationGroupIdentifier("group.com.parse.parseuidemo")
 // Setup Parse
 Parse.setApplicationId("<ParseAppId>", clientKey: "<ClientKey>")
-</code></pre>
+```
+</div>
 
 *   Add the following before you initialize Parse in your App Extension:
 
-<pre><code class="objectivec">
+<div class="language-toggle" markdown="1">
+```objective_c
 // Enable data sharing in app extensions.
 [Parse enableDataSharingWithApplicationGroupIdentifier:@"group.com.parse.parseuidemo"
                                  containingApplication:@"com.parse.parseuidemo"];
 // Setup Parse
 [Parse setApplicationId:@"<ParseAppId>" clientKey:@"<ClientKey>"];
-</code></pre>
-<pre><code class="swift">
+```
+
+```swift
 // Enable data sharing in app extensions.
 Parse.enableDataSharingWithApplicationGroupIdentifier("group.com.parse.parseuidemo",
                             containingApplicaiton: "com.parse.parseuidemo")
 // Setup Parse
 Parse.setApplicationId("<ParseAppId>", clientKey: "<ClientKey>")
-</code></pre>
+```
+</div>
+
 
 As you might have noticed - there are few pieces of information that need to be in sync for this to work and be enabled:
 

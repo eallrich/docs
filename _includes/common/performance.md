@@ -33,6 +33,7 @@ The order of a query constraint's usefulness is:
 
 Take a look at the following query to retrieve GameScore objects:
 
+{% if page.language == "js" %}
 ```javascript
 var GameScore = Parse.Object.extend("GameScore");
 var query = new Parse.Query(GameScore);
@@ -40,48 +41,54 @@ query.equalTo("score", 50);
 query.containedIn("playerName",
     ["Jonathan Walsh", "Dario Wunsch", "Shawn Simon"]);
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 PFQuery *query = [PFQuery queryWithClassName:@"GameScore"];
 [query whereKey:@"score" equalTo:@50];
 [query whereKey:@"playerName"
     containedIn:@[@"Jonathan Walsh", @"Dario Wunsch", @"Shawn Simon"]];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 let query = PFQuery.queryWithClassName("GameScore")
 query.whereKey("score", equalTo: 50)
 query.whereKey("playerName", containedIn: ["Jonathan Walsh", "Dario Wunsch", "Shawn Simon"])
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 ParseQuery<ParseObject> query = ParseQuery.getQuery("GameScore");
 query.whereEqualTo("score", 50);
 query.whereContainedIn("playerName", Arrays.asList("Jonathan Walsh", "Dario Wunsch", "Shawn Simon"));
 ```
-{: .common-lang-block .java }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 var names = new[] { "Jonathan Walsh", "Dario Wunsch", "Shawn Simon" };
 var query = new ParseObject.GetQuery("GameScore")
     .WhereEqualTo("score", 50)
     .WhereContainedIn("playerName", names);
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query = new ParseQuery("GameScore");
 
@@ -89,51 +96,58 @@ $query->equalTo("score", 50);
 $query->containedIn("playerName",
     ["Jonathan Walsh", "Dario Wunsch", "Shawn Simon"]);
 ```
-{: .common-lang-block .php }
+{% endif %}
 
 Creating an index query based on the score field would yield a smaller search space in general than creating one on the `playerName` field.
 
 When examining data types, booleans have a very low entropy and and do not make good indexes. Take the following query constraint:
 
+{% if page.language == "js" %}
 ```javascript
 query.equalTo("cheatMode", false);
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 [query whereKey:@"cheatMode" equalTo:@NO];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 query.whereKey("cheatMode", equalTo: false)
-</code></pre>
-{: .common-lang-block .swift }
+```
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 query.whereEqualTo("cheatMode", false);
 ```
-{: .common-lang-block .java }
+</div>
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 query.WhereEqualTo("cheatMode", false);
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query->equalTo("cheatMode", false);
 ```
-{: .common-lang-block .php }
+{% endif %}
 
 The two possible values for `"cheatMode"` are `true` and `false`. If an index was added on this field it would be of little use because it's likely that 50% of the records will have to be looked at to return query results.
 
@@ -165,6 +179,7 @@ Additionally, the following queries under certain scenarios may result in slow q
 
 For example, let's say you're tracking high scores for a game in a GameScore class. Now say you want to retrieve the scores for all players except a certain one. You could create this query:
 
+{% if page.language == "js" %}
 ```javascript
 var GameScore = Parse.Object.extend("GameScore");
 var query = new Parse.Query(GameScore);
@@ -173,9 +188,11 @@ query.find().then(function(results) {
   // Retrieved scores successfully
 });
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 PFQuery *query = [PFQuery queryWithClassName:@"GameScore"];
 [query whereKey:@"playerName" notEqualTo:@"Michael Yabuti"];
 [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
@@ -183,10 +200,8 @@ PFQuery *query = [PFQuery queryWithClassName:@"GameScore"];
     // Retrieved scores successfully
   }
 }];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 let query = PFQuery.queryWithClassName("GameScore")
 query.whereKey("playerName", notEqualTo: "Michael Yabuti")
 query.findObjectsInBackgroundWithBlock {
@@ -195,9 +210,11 @@ query.findObjectsInBackgroundWithBlock {
     // Retrieved scores successfully
   }
 }
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 ParseQuery<ParseObject> query = ParseQuery.getQuery("GameScore");
 query.whereNotEqualTo("playerName", "Michael Yabuti");
@@ -210,25 +227,29 @@ query.findInBackground(new FindCallback<ParseObject>() {
   }
 });
 ```
-{: .common-lang-block .java }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 var results = await ParseObject.GetQuery("GameScore")
     .WhereNotEqualTo("playerName", "Michael Yabuti")
     .FindAsync();
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query = new ParseQuery("GameScore");
 
@@ -237,7 +258,7 @@ $query->notEqualTo("playerName", "Michael Yabuti");
 $gameScores = $query->find();
 // Retrieved game scores
 ```
-{: .common-lang-block .php }
+{% endif %}
 
 This query can't take advantage of indexes. The database has to look at all the objects in the `"GameScore"` class to satisfy the constraint and retrieve the results. As the number of entries in the class grows, the query takes longer to run.
 
@@ -245,98 +266,114 @@ Luckily, most of the time a “Not Equal To” query condition can be rewritten 
 
 For example if the User class has a column called state which has values “SignedUp”, “Verified”, and “Invited”, the slow way to find all users who have used the app at least once would be to run the query:
 
+
+{% if page.language == "js" %}
 ```javascript
 var query = new Parse.Query(Parse.User);
 query.notEqualTo("state", "Invited");
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 PFQuery *query = [PFUser query];
 [query whereKey:@"state" notEqualTo:@"Invited"];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 var query = PFUser.query()
 query.whereKey("state", notEqualTo: "Invited")
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
 query.whereNotEqualTo("state", "Invited");
 ```
-{: .common-lang-block .java }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 var query = ParseUser.Query
     .WhereNotEqualTo("state", "Invited");
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query = new ParseQuery("_User");
 
 $query->notEqualTo("state", "Invited");
 ```
-{: .common-lang-block .php }
+{% endif %}
 
 It would be faster to use the “Contained In” condition when setting up the query:
 
+{% if page.language == "js" %}
 ```javascript
 query.containedIn("state", ["SignedUp", "Verified"]);
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 [query whereKey:@"state"
     containedIn:@[@"SignedUp", @"Verified"]];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 query.whereKey("state", containedIn: ["SignedUp", "Verified"])
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 query.whereContainedIn("state", Arrays.asList("SignedUp", "Verified"));
 ```
-{: .common-lang-block .java }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 query.WhereContainedIn("state", new[] { "SignedUp", "Verified" });
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query->containedIn("state", ["SignedUp", "Verified"]);
 ```
-{: .common-lang-block .php }
+{% endif %}
 
 Sometimes, you may have to completely rewrite your query. Going back to the `"GameScore"` example, let's say we were running that query to display players who had scored higher than the given player. We could do this differently, by first getting the given player's high score and then using the following query:
 
+{% if page.language == "js" %}
 ```javascript
 var GameScore = Parse.Object.extend("GameScore");
 var query = new Parse.Query(GameScore);
@@ -346,9 +383,11 @@ query.find().then(function(results) {
   // Retrieved scores successfully
 });
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 PFQuery *query = [PFQuery queryWithClassName:@"GameScore"];
 // Previously retrieved highScore for Michael Yabuti
 [query whereKey:@"score" greaterThan:highScore];
@@ -357,10 +396,8 @@ PFQuery *query = [PFQuery queryWithClassName:@"GameScore"];
     // Retrieved scores successfully
   }
 }];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 let query = PFQuery.queryWithClassName("GameScore")
 // Previously retrieved highScore for Michael Yabuti
 query.whereKey("score", greaterThan: highScore)
@@ -370,9 +407,11 @@ query.findObjectsInBackgroundWithBlock {
     // Retrieved scores successfully
   }
 }
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 ParseQuery<ParseObject> query = ParseQuery.getQuery("GameScore");
 // Previously retrieved highScore for Michael Yabuti
@@ -386,26 +425,30 @@ query.findInBackground(new FindCallback<ParseObject>() {
   }
 });
 ```
-{: .common-lang-block .java }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 // Previously retrieved highScore for Michael Yabuti
 var results = await ParseObject.GetQuery("GameScore")
     .WhereGreaterThan("score", highScore)
     .FindAsync();
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query = new ParseQuery("GameScore");
 
@@ -415,7 +458,7 @@ $query->greaterThan("score", $highScore);
 $gameScores = $query->find();
 // Retrieved game scores
 ```
-{: .common-lang-block .php }
+{% endif %}
 
 The new query you use depends on your use case. This may sometimes mean a redesign of your data model.
 
@@ -423,94 +466,109 @@ The new query you use depends on your use case. This may sometimes mean a redesi
 
 Similar to “Not Equal To”, the “Not Contained In” query constraint can't use an index. You should try and use the complementary “Contained In” constraint. Building on the User example, if the state column had one more value, “Blocked”, to represent blocked users, a slow query to find active users would be:
 
+{% if page.language == "js" %}
 ```javascript
 var query = new Parse.Query(Parse.User);
 query.notContainedIn("state", ["Invited", "Blocked"]);
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 PFQuery *query = [PFUser query];
 [query whereKey:@"state" notContainedIn:@[@"Invited", @"Blocked"]];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 var query = PFUser.query()
 query.whereKey("state", notContainedIn: ["Invited", "Blocked"])
-</code></pre>
-{: .common-lang-block .swift }
+```
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
 query.whereNotContainedIn("state", Arrays.asList("Invited", "Blocked"));
 ```
-{: .common-lang-block .java }
+</div>
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 var query = ParseUser.Query
     .WhereNotContainedIn("state", new[] { "Invited", "Blocked" });
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query = new ParseQuery("_User");
 
 $query->notContainedIn("state", ["Invited", "Blocked"]);
 ```
-{: .common-lang-block .php }
+{% endif %}
 
 Using a complimentary “Contained In” query constraint will always be faster:
 
+{% if page.language == "js" %}
 ```javascript
 query.containedIn("state", ["SignedUp", "Verified"]);
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 [query whereKey:@"state" containedIn:@[@"SignedUp", @"Verified"]];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 query.whereKey("state", containedIn: ["SignedUp", "Verified"])
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 query.whereContainedIn("state", Arrays.asList("SignedUp", "Verified"));
 ```
-{: .common-lang-block .java }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 query.WhereContainedIn("state", new[] { "SignedUp", "Verified"});
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query->containedIn("state", ["SignedUp", "Verified"]);
 ```
-{: .common-lang-block .php }
+{% endif %}
+
 
 This means rewriting your queries accordingly. Your query rewrites will depend on your schema set up. It may mean redoing that schema.
 
@@ -520,173 +578,201 @@ Regular expression queries should be avoided due to performance considerations. 
 
 You should avoid using regular expression constraints that don't use indexes. For example, the following query looks for data with a given string in the `"playerName"` field. The string search is case insensitive and therefore cannot be indexed:
 
+{% if page.language == "js" %}
 ```javascript
 query.matches("playerName", "Michael", “i”);
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 [query whereKey:@"playerName" matchesRegex:@"Michael" modifiers:@"i"];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 query.whereKey("playerName", matchesRegex: "Michael", modifiers: "i")
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 query.whereMatches("playerName", "Michael", "i");
 ```
-{: .common-lang-block .java }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 query.WhereMatches("playerName", "Michael", "i")
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query->matches("playerName", "Michael", "i");
 ```
-{: .common-lang-block .php }
+{% endif %}
 
 The following query, while case sensitive, looks for any occurrence of the string in the field and cannot be indexed:
 
+{% if page.language == "js" %}
 ```javascript
 query.contains("playerName", "Michael");
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 [query whereKey:@"playerName" containsString:@"Michael"];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 query.whereKey("playerName", containsString: "Michael")
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 query.whereContains("playerName", "Michael");
 ```
-{: .common-lang-block .java }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 query.WhereContains("playerName", "Michael")
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query->contains("playerName", "Michael");
 ```
-{: .common-lang-block .php }
+{% endif %}
 
 These queries are both slow. In fact, the `matches` and `contains` query constraints are not covered in our querying guides on purpose and we do not recommend using them. Depending on your use case, you should switch to using the following constraint that uses an index, such as:
 
+{% if page.language == "js" %}
 ```javascript
 query.startsWith("playerName", "Michael");
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 [query whereKey:@"playerName" hasPrefix:@"Michael"];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 query.whereKey("playerName", hasPrefix: "Michael")
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 query.whereStartsWith("playerName", "Michael");
 ```
-{: .common-lang-block .java }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 query.WhereStartsWith("playerName", "Michael")
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query->startsWith("playerName", "Michael");
 ```
-{: .common-lang-block .php }
+{% endif %}
 
 This looks for data that starts with the given string. This query will use the backend index, so it will be faster even for large datasets.
 
 As a best practice, when you use regular expression constraints, you'll want to ensure that other constraints in the query reduce the result set to the order of hundreds of objects to make the query efficient. If you must use the `matches` or `contains` constraints for legacy reasons, then use case sensitive, anchored queries where possible, for example:
 
+{% if page.language == "js" %}
 ```javascript
 query.matches("playerName", "^Michael");
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 [query whereKey:@"playerName" matchesRegex:@"^Michael"];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 query.whereKey("playerName", matchesRegex: "^Michael")
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 query.whereMatches("playerName", "^Michael");
 ```
-{: .common-lang-block .java }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 query.WhereMatches("playerName", "^Michael")
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query->matches("playerName", "^Michael");
 ```
-{: .common-lang-block .php }
+{% endif %}
 
 Most of the use cases around using regular expressions involve implementing search. A more performant way of implementing search is detailed later.
 
@@ -696,48 +782,56 @@ Writing restrictive queries allows you to return only the data that the client n
 
 You can use skip and limit to page through results and load the data as is needed. The query limit is 100 by default:
 
+{% if page.language == "js" %}
 ```javascript
 query.limit(10); // limit to at most 10 results
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 query.limit = 10; // limit to at most 10 results
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 query.limit = 10 // limit to at most 10 results
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 query.setLimit(10); // limit to at most 10 results
 ```
-{: .common-lang-block .java }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 query.Limit(10); // limit to at most 10 results
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query->limit(10); // limit to at most 10 results
 ```
-{: .common-lang-block .php }
+{% endif %}
 
 If you're issuing queries on GeoPoints, make sure you specify a reasonable radius:
 
+{% if page.language == "js" %}
 ```javascript
 var query = new Parse.Query(PlaceObject);
 query.withinMiles("location", userGeoPoint, 10.0);
@@ -745,9 +839,11 @@ query.find().then(function(placesObjects) {
   // Get a list of objects within 10 miles of a user's location
 });
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 PFQuery *query = [PFQuery queryWithClassName:@"Place"];
 [query whereKey:@"location" nearGeoPoint:userGeoPoint withinMiles:10.0];
 [query findObjectsInBackgroundWithBlock:^(NSArray *places, NSError *error) {
@@ -755,10 +851,8 @@ PFQuery *query = [PFQuery queryWithClassName:@"Place"];
     // List of objects within 10 miles of a user's location
   }
 }];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 let query = PFQuery.queryWithClassName("Place")
 query.whereKey("location", nearGeoPoint: userGeoPoint, withinMiles: 10.0)
 query.findObjectsInBackgroundWithBlock {
@@ -767,9 +861,11 @@ query.findObjectsInBackgroundWithBlock {
     // List of places within 10 miles of a user's location
   }
 }
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 ParseQuery<ParseObject> query = ParseQuery.getQuery("Place");
 query.whereWithinMiles("location", userGeoPoint, 10.0);
@@ -782,25 +878,29 @@ query.findInBackground(new FindCallback<ParseObject>() {
   }
 });
 ```
-{: .common-lang-block .java }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 var results = await ParseObject.GetQuery("GameScore")
     .WhereWithinDistance("location", userGeoPoint, ParseGeoDistance.FromMiles(10.0))
     .FindAsync();
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query = new ParseQuery("Place");
 
@@ -809,10 +909,11 @@ $query->withinMiles("location", $userGeoPoint, 10);
 $placeObjects = $query.find();
 // Gets an array of objects within 10 miles of a user's location
 ```
-{: .common-lang-block .php }
+{% endif %}
 
 You can further limit the fields returned by calling select:
 
+{% if page.language == "js" %}
 ```javascript
 var GameScore = Parse.Object.extend("GameScore");
 var query = new Parse.Query(GameScore);
@@ -821,9 +922,11 @@ query.find().then(function(results) {
   // each of results will only have the selected fields available.
 });
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 PFQuery *query = [PFQuery queryWithClassName:@"GameScore"];
 [query selectKeys:@[@"score", @"playerName"]];
 [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
@@ -831,10 +934,8 @@ PFQuery *query = [PFQuery queryWithClassName:@"GameScore"];
     // each of results will only have the selected fields available.
   }
 }];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 let query = PFQuery.queryWithClassName("GameScore")
 query.selectKeys(["score", "playerName"])
 query.findObjectsInBackgroundWithBlock {
@@ -843,9 +944,11 @@ query.findObjectsInBackgroundWithBlock {
     // each of results will only have the selected fields available.
   }
 }
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 ParseQuery<ParseObject> query = ParseQuery.getQuery("GameScore");
 query.selectKeys(Arrays.asList("score", "playerName"));
@@ -858,26 +961,30 @@ query.findInBackground(new FindCallback<ParseObject>() {
   }
 });
 ```
-{: .common-lang-block .java }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 var results = await ParseObject.GetQuery("GameScore")
      .Select(new[] { "score", "playerName" })
      .FindAsync();
 // each of results will only have the selected fields available.
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query = new ParseQuery("GameScore");
 
@@ -886,7 +993,7 @@ $query->select(["score", "playerName"]);
 $results = $query->find();
 // each of results will only have the selected fields available.
 ```
-{: .common-lang-block .php }
+{% endif %}
 
 ## Client-side Caching
 
@@ -921,14 +1028,17 @@ You could have ran a query on the Review class on the client, returned only the 
 
 As you look at optimizing your queries, you'll find that you may have to change the queries - sometimes even after you've shipped your app to the App Store or Google Play. The ability to change your queries without a client update is possible if you use [Cloud Functions]({{ site.baseUrl }}/cloudcode/guide/#cloud-functions). Even if you have to redesign your schema, you could make all the changes in your Cloud Functions while keeping the client interface the same to avoid an app update. Take the average stars Cloud Function example from before, calling it from a client SDK would look like this:
 
+{% if page.language == "js" %}
 ```javascript
 Parse.Cloud.run("averageStars", { "movie": "The Matrix" }).then(function(ratings) {
   // ratings is 4.5
 });
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 [PFCloud callFunctionInBackground:@"averageStars"
                   withParameters:@{@"movie": @"The Matrix"}
                            block:^(NSNumber *ratings, NSError *error) {
@@ -936,19 +1046,19 @@ Parse.Cloud.run("averageStars", { "movie": "The Matrix" }).then(function(ratings
     // ratings is 4.5
   }
 }];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 PFCloud.callFunctionInBackground("averageStars", withParameters: ["movie": "The Matrix"]) {
   (ratings, error) in
   if !error {
     // ratings is 4.5
   }
 }
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 HashMap<String, String> params = new HashMap();
 params.put("movie", "The Matrix");
@@ -961,8 +1071,9 @@ ParseCloud.callFunctionInBackground("averageStars", params, new FunctionCallback
   }
 });
 ```
-{: .common-lang-block .java }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 IDictionary<string, object> dictionary = new Dictionary<string, object>
 {
@@ -974,23 +1085,26 @@ ParseCloud.CallFunctionAsync<float>("averageStars", dictionary).ContinueWith(t =
   // result is 4.5
 });
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $rating = ParseCloud::run("averageStars", ["movie" => "The Matrix" ]);
 // rating is 4.5
 ```
-{: .common-lang-block .php }
+{% endif %}
 
 If later on, you need to modify the underlying data model, your client call can remain the same, as long as you return back a number that represents the ratings result.
 
@@ -1000,6 +1114,7 @@ When counting objects frequently, instead consider storing a count variable in t
 
 Suppose you are displaying movie information in your app and your data model consists of a Movie class and a Review class that contains a pointer to the corresponding movie. You might want to display the review count for each movie on the top-level navigation screen using a query like this:
 
+{% if page.language == "js" %}
 ```javascript
 var Review = Parse.Object.extend("Review");
 var query = new Parse.Query("Review");
@@ -1008,9 +1123,11 @@ query.count().then(function(count) {
   // Request succeeded
 });
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 PFQuery *query = [PFQuery queryWithClassName:@"Review"];
 [query whereKey:@"movie" equalTo:movie];
 [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
@@ -1018,10 +1135,8 @@ PFQuery *query = [PFQuery queryWithClassName:@"Review"];
     // Request succeeded
   }
 }];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 let query = PFQuery.queryWithClassName("Review")
 query.whereKey("movie", equalTo: movie)
 query.countObjectsInBackgroundWithBlock {
@@ -1030,9 +1145,11 @@ query.countObjectsInBackgroundWithBlock {
     // Request succeeded
   }
 }
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 ParseQuery<ParseObject> query = ParseQuery.getQuery("Review");
 // movieId corresponds to a given movie's id
@@ -1046,26 +1163,30 @@ query.countInBackground(new CountCallback() {
   }
 });
 ```
-{: .common-lang-block .java }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 var count = await ParseObject.GetQuery("Review")
 // movieId corresponds to a given movie's id
     .WhereEqualTo("movie", movieId)
     .CountAsync();
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query = new ParseQuery("Review");
 
@@ -1074,7 +1195,7 @@ $query->equalTo("movie", $movieId);
 
 $count = $query.count();
 ```
-{: .common-lang-block .php }
+{% endif %}
 
 If you run the count query for each of the UI elements, they will not run efficiently on large data sets. One approach to avoid using the `count()` operator could be to add a field to the Movie class that represents the review count for that movie. When saving an entry to the Review class you could increment the corresponding movie's review count field. This can be done in an `afterSave` handler:
 
@@ -1097,6 +1218,8 @@ Parse.Cloud.afterSave("Review", function(request) {
 
 Your new optimized query would not need to look at the Review class to get the review count:
 
+
+{% if page.language == "js" %}
 ```javascript
 var Movie = Parse.Object.extend("Movie");
 var query = new Parse.Query(Movie);
@@ -1106,19 +1229,19 @@ query.find().then(function(results) {
   // Request failed
 });
 ```
-{: .common-lang-block .js }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 PFQuery *query = [PFQuery queryWithClassName:@"Movie"];
 [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
   if (!error) {
     // Results include the reviews count field
   }
 }];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 let query = PFQuery.queryWithClassName("Movie")
 query.findObjectsInBackgroundWithBlock {
   (objects, error) in
@@ -1126,9 +1249,11 @@ query.findObjectsInBackgroundWithBlock {
     // Results include the reviews count field
   }
 }
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 ParseQuery<ParseObject> query = ParseQuery.getQuery("Movie");
 query.findInBackground(new FindCallback<ParseObject>() {
@@ -1140,32 +1265,36 @@ query.findInBackground(new FindCallback<ParseObject>() {
   }
 });
 ```
-{: .common-lang-block .java }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 var results = await ParseObject.GetQuery("Movie")
     .FindAsync();
 // Results include the reviews count field
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query = new ParseQuery("Movie");
 
 $results = $query.find();
 // Results include the reviews count field
 ```
-{: .common-lang-block .php }
+{% endif %}
 
 You could also use a separate Parse Object to keep track of counts for each review. Whenever a review gets added or deleted, you can increment or decrement the counts in an `afterSave` or `afterDelete` Cloud Code handler. The approach you choose depends on your use case.
 
@@ -1200,6 +1329,7 @@ This saves your words and hashtags in array fields, which MongoDB will store wit
 
 Once you've got the keywords set up, you can efficiently look them up using “All” constraint on your query:
 
+{% if page.language == "js" %}
 ```javascript
 var Post = Parse.Object.extend("Post");
 var query = new Parse.Query(Post);
@@ -1210,9 +1340,11 @@ query.find().then(function(results) {
   // Request failed
 });
 ```
-{: .common-lang-block .js}
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 PFQuery *query = [PFQuery queryWithClassName:@"Post"];
 [query whereKey:@"hashtags" containsAllObjectsInArray:@[@"#parse", @"#ftw"]];
 [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
@@ -1220,10 +1352,8 @@ PFQuery *query = [PFQuery queryWithClassName:@"Post"];
     // Request succeeded
   }
 }];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 let query = PFQuery.queryWithClassName("Post")
 query.whereKey("hashtags", containsAllObjectsInArray: ["#parse", "#ftw"])
 query.findObjectsInBackgroundWithBlock {
@@ -1232,9 +1362,11 @@ query.findObjectsInBackgroundWithBlock {
     // Request succeeded
   }
 }
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "java" %}
 ```java
 ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
 query.whereContainsAll("hashtags", Arrays.asList("#parse", "#ftw"));
@@ -1247,25 +1379,29 @@ query.findInBackground(new FindCallback<ParseObject>() {
   }
 });
 ```
-{: .common-lang-block .java }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 var results = await ParseObject.GetQuery("Post")
     .WhereContainsAll("hashtags", new[] { "#parse", "#ftw" })
     .FindAsync();
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $query = new ParseQuery("Post");
 
@@ -1274,7 +1410,7 @@ $query->containsAll("hashtags", [“#parse”, “#ftw”]);
 $posts = $query->find();
 // posts containing all the given hash tags
 ```
-{: .common-lang-block .php}
+{% endif %}
 
 ## Limits and Other Considerations
 
@@ -1290,7 +1426,7 @@ There are some limits in place to ensure the API can provide the data you need i
 
 * Queries return 100 objects by default. Use the `limit` parameter to change this.
 * Skips and limits can only be used on the outer query.
-* Constraints that collide with each other will result in only one of the constraint being applied. An example of this would be two `equalTo` constraints over the same key with two different values, which contradicts itself (perhaps you're looking for 'contains').
+* Constraints that collide with each other will result in only one of the constraints being applied. An example of this would be two `equalTo` constraints over the same key with two different values, which contradicts itself (perhaps you're looking for 'contains').
 * No geo-queries inside compound OR queries.
 * Using `$exists: false` is not advised.
 * The `each` query method in the JavaScript SDK cannot be used in conjunction with queries using geo-point constraints.

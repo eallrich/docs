@@ -20,7 +20,7 @@ We'll go through each of these in detail as we run through the various use cases
 
 The first thing your app will do is probably ask the user to sign up. The following code illustrates a typical sign up:
 
-<pre><code class="javascript">
+```javascript
 var user = new Parse.User();
 user.set("username", "my name");
 user.set("password", "my pass");
@@ -28,17 +28,14 @@ user.set("email", "email@example.com");
 
 // other fields can be set just like with Parse.Object
 user.set("phone", "415-392-0202");
-
-user.signUp(null, {
-  success: function(user) {
-    // Hooray! Let them use the app now.
-  },
-  error: function(user, error) {
-    // Show the error message somewhere and let the user try again.
-    alert("Error: " + error.code + " " + error.message);
-  }
-});
-</code></pre>
+try {
+  await user.signUp();
+  // Hooray! Let them use the app now.
+} catch (error) {
+  // Show the error message somewhere and let the user try again.
+  alert("Error: " + error.code + " " + error.message);
+}
+```
 
 This call will asynchronously create a new user in your Parse App. Before it does this, it also checks to make sure that both the username and email are unique. Also, it securely hashes the password in the cloud using bcrypt. We never store passwords in plaintext, nor will we ever transmit passwords back to the client in plaintext.
 
@@ -52,16 +49,10 @@ You are free to use an email address as the username. Simply ask your users to e
 
 Of course, after you allow users to sign up, you need to let them log in to their account in the future. To do this, you can use the class method `logIn`.
 
-<pre><code class="javascript">
-Parse.User.logIn("myname", "mypass", {
-  success: function(user) {
-    // Do stuff after successful login.
-  },
-  error: function(user, error) {
-    // The login failed. Check error to see why.
-  }
-});
-</code></pre>
+```javascript
+const user = await Parse.User.logIn("myname", "mypass");
+// Do stuff after successful login.
+```
 
 ## Verifying Emails
 
@@ -81,42 +72,42 @@ Please note that this functionality is disabled by default on Node.js environmen
 
 Whenever you use any signup or login methods, the user is cached in localStorage, or in any storage you configured via the `Parse.setAsyncStorage` method. You can treat this cache as a session, and automatically assume the user is logged in:
 
-<pre><code class="javascript">
+```javascript
 var currentUser = Parse.User.current();
 if (currentUser) {
     // do stuff with the user
 } else {
     // show the signup or login page
 }
-</code></pre>
+```
 
 When using a platform with an async storage system you should call `currentAsync()` instead.
 
-<pre><code class="javascript">
+```javascript
 Parse.User.currentAsync().then(function(user) {
     // do stuff with your user
 });
-</code></pre>
+```
 
 You can clear the current user by logging them out:
 
-<pre><code class="javascript">
+```javascript
 Parse.User.logOut().then(() => {
   var currentUser = Parse.User.current();  // this will now be null
 });
-</code></pre>
+```
 
 ## Setting the Current User
 
 If you’ve created your own authentication routines, or otherwise logged in a user on the server side, you can now pass the session token to the client and use the `become` method. This method will ensure the session token is valid before setting the current user.
 
-<pre><code class="javascript">
+```javascript
 Parse.User.become("session-token-here").then(function (user) {
   // The current user is now set to user.
 }, function (error) {
   // The token could not be validated.
 });
-</code></pre>
+```
 
 ## Security For User Objects
 
@@ -126,32 +117,20 @@ Specifically, you are not able to invoke any of the `save` or `delete` methods u
 
 The following illustrates this security policy:
 
-<pre><code class="javascript">
-var user = Parse.User.logIn("my_username", "my_password", {
-  success: function(user) {
-    user.set("username", "my_new_username");  // attempt to change username
-    user.save(null, {
-      success: function(user) {
-        // This succeeds, since the user was authenticated on the device
+```javascript
+const user = await Parse.User.logIn("my_username", "my_password");
+user.set("username", "my_new_username");
+await user.save();
+// This succeeds, since the user was authenticated on the device
 
-        // Get the user from a non-authenticated method
-        var query = new Parse.Query(Parse.User);
-        query.get(user.objectId, {
-          success: function(userAgain) {
-            userAgain.set("username", "another_username");
-            userAgain.save(null, {
-              error: function(userAgain, error) {
-                // This will error, since the Parse.User is not authenticated
-              }
-            });
-          }
-        });
-      }
-    });
-  }
+// Get the user from a non-authenticated method
+const query = new Parse.Query(Parse.User);
+const userAgain = await query.get(user.objectId);
+userAgain.set("username", "another_username");
+await userAgain.save().catch(error => {
+  // This will error, since the Parse.User is not authenticated
 });
-
-</code></pre>
+```
 
 The `Parse.User` obtained from `Parse.User.current()` will always be authenticated.
 
@@ -163,19 +142,19 @@ The same security model that applies to the `Parse.User` can be applied to other
 
 The simplest way to use a `Parse.ACL` is to specify that an object may only be read or written by a single user. This is done by initializing a Parse.ACL with a `Parse.User`: `new Parse.ACL(user)` generates a `Parse.ACL` that limits access to that user. An object's ACL is updated when the object is saved, like any other property. Thus, to create a private note that can only be accessed by the current user:
 
-<pre><code class="javascript">
+```javascript
 var Note = Parse.Object.extend("Note");
 var privateNote = new Note();
 privateNote.set("content", "This note is private!");
 privateNote.setACL(new Parse.ACL(Parse.User.current()));
 privateNote.save();
-</code></pre>
+```
 
 This note will then only be accessible to the current user, although it will be accessible to any device where that user is signed in. This functionality is useful for applications where you want to enable access to user data across multiple devices, like a personal todo list.
 
 Permissions can also be granted on a per-user basis. You can add permissions individually to a `Parse.ACL` using `setReadAccess` and `setWriteAccess`. For example, let's say you have a message that will be sent to a group of several users, where each of them have the rights to read and delete that message:
 
-<pre><code class="javascript">
+```javascript
 var Message = Parse.Object.extend("Message");
 var groupMessage = new Message();
 var groupACL = new Parse.ACL();
@@ -188,17 +167,17 @@ for (var i = 0; i < userList.length; i++) {
 
 groupMessage.setACL(groupACL);
 groupMessage.save();
-</code></pre>
+```
 
 You can also grant permissions to all users at once using `setPublicReadAccess` and `setPublicWriteAccess`. This allows patterns like posting comments on a message board. For example, to create a post that can only be edited by its author, but can be read by anyone:
 
-<pre><code class="javascript">
+```javascript
 var publicPost = new Post();
 var postACL = new Parse.ACL(Parse.User.current());
 postACL.setPublicReadAccess(true);
 publicPost.setACL(postACL);
 publicPost.save();
-</code></pre>
+```
 
 Operations that are forbidden, such as deleting an object that you do not have write access to, result in a `Parse.Error.OBJECT_NOT_FOUND` error code. For security purposes, this prevents clients from distinguishing which object ids exist but are secured, versus which object ids do not exist at all.
 
@@ -208,17 +187,15 @@ It's a fact that as soon as you introduce passwords into a system, users will fo
 
 To kick off the password reset flow, ask the user for their email address, and call:
 
-<pre><code class="javascript">
-Parse.User.requestPasswordReset("email@example.com", {
-  success: function() {
+```javascript
+Parse.User.requestPasswordReset("email@example.com")
+.then(() => {
   // Password reset request was sent successfully
-  },
-  error: function(error) {
-    // Show the error message somewhere
-    alert("Error: " + error.code + " " + error.message);
-  }
+}).catch((error) => {
+  // Show the error message somewhere
+  alert("Error: " + error.code + " " + error.message);
 });
-</code></pre>
+```
 
 This will attempt to match the given email with the user's email or username field, and will send them a password reset email. By doing this, you can opt to have users use their email as their username, or you can collect it separately and store it in the email field.
 
@@ -235,21 +212,17 @@ Note that the messaging in this flow will reference your app by the name that yo
 
 To query for users, you can simple create a new `Parse.Query` for `Parse.User`s:
 
-<pre><code class="javascript">
-var query = new Parse.Query(Parse.User);
+```javascript
+const query = new Parse.Query(Parse.User);
 query.equalTo("gender", "female");  // find all the women
-query.find({
-  success: function(women) {
-    // Do stuff
-  }
-});
-</code></pre>
+const women = await query.find();
+```
 
 ## Associations
 
 Associations involving a `Parse.User` work right of the box. For example, let's say you're making a blogging app. To store a new post for a user and retrieve all their posts:
 
-<pre><code class="javascript">
+```javascript
 var user = Parse.User.current();
 
 // Make a new post
@@ -258,19 +231,14 @@ var post = new Post();
 post.set("title", "My New Post");
 post.set("body", "This is some great content.");
 post.set("user", user);
-post.save(null, {
-  success: function(post) {
-    // Find all posts by the current user
-    var query = new Parse.Query(Post);
-    query.equalTo("user", user);
-    query.find({
-      success: function(usersPosts) {
-        // userPosts contains all of the posts by the current user.
-      }
-    });
-  }
+await post.save();
+// Find all posts by the current user
+const query = new Parse.Query(Post);
+query.equalTo("user", user);
+const userPosts = await query.find();
+// userPosts contains all of the posts by the current user.
 });
-</code></pre>
+```
 
 ## Facebook Users
 
@@ -288,7 +256,7 @@ To start using Facebook with Parse, you need to:
 3.  Follow [these instructions](https://developers.facebook.com/docs/javascript/quickstart/) for loading the Facebook JavaScript SDK into your application.
 4.  Replace your call to `FB.init()` with a call to `Parse.FacebookUtils.init()`. For example, if you load the Facebook JavaScript SDK asynchronously, your `fbAsyncInit` function will look like this:
 
-<pre><code class="javascript">
+```javascript
 &lt;script&gt;
   // Initialize Parse
   Parse.initialize("$PARSE_APPLICATION_ID", "$PARSE_JAVASCRIPT_KEY");
@@ -313,7 +281,7 @@ To start using Facebook with Parse, you need to:
     fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));
 &lt;/script&gt;
-</code></pre>
+```
 
 The function assigned to `fbAsyncInit` is run as soon as the Facebook JavaScript SDK has completed loading. Any code that you want to run after the Facebook JavaScript SDK is loaded should be placed within this function and after the call to `Parse.FacebookUtils.init()`.
 
@@ -327,20 +295,18 @@ There are two main ways to use Facebook with your Parse users: (1) logging in as
 
 `Parse.FacebookUtils` provides a way to allow your `Parse.User`s to log in or sign up through Facebook. This is accomplished using the `logIn()` method:
 
-<pre><code class="javascript">
-Parse.FacebookUtils.logIn(null, {
-  success: function(user) {
-    if (!user.existed()) {
-      alert("User signed up and logged in through Facebook!");
-    } else {
-      alert("User logged in through Facebook!");
-    }
-  },
-  error: function(user, error) {
-    alert("User cancelled the Facebook login or did not fully authorize.");
+```javascript
+try {
+  const users = await = Parse.FacebookUtils.logIn();
+  if (!user.existed()) {
+    alert("User signed up and logged in through Facebook!");
+  } else {
+    alert("User logged in through Facebook!");
   }
-});
-</code></pre>
+} catch(error) {
+  alert("User cancelled the Facebook login or did not fully authorize.");
+}
+```
 
 When this code is run, the following happens:
 
@@ -351,16 +317,9 @@ When this code is run, the following happens:
 
 You may optionally provide a comma-delimited string that specifies what [permissions](https://developers.facebook.com/docs/authentication/permissions/) your app requires from the Facebook user.  For example:
 
-<pre><code class="javascript">
-Parse.FacebookUtils.logIn("user_likes,email", {
-  success: function(user) {
-    // Handle successful login
-  },
-  error: function(user, error) {
-    // Handle errors and cancellation
-  }
-});
-</code></pre>
+```javascript
+const user = await Parse.FacebookUtils.logIn("user_likes,email");
+```
 
 `Parse.User` integration doesn't require any permissions to work out of the box (ie. `null` or specifying no permissions is perfectly acceptable). [Read more about permissions on Facebook's developer guide.](https://developers.facebook.com/docs/reference/api/permissions/)
 
@@ -373,30 +332,25 @@ Parse.FacebookUtils.logIn("user_likes,email", {
 
 If you want to associate an existing `Parse.User` to a Facebook account, you can link it like so:
 
-<pre><code class="javascript">
+```javascript
 if (!Parse.FacebookUtils.isLinked(user)) {
-  Parse.FacebookUtils.link(user, null, {
-    success: function(user) {
-      alert("Woohoo, user logged in with Facebook!");
-    },
-    error: function(user, error) {
-      alert("User cancelled the Facebook login or did not fully authorize.");
-    }
+  try  {
+    await Parse.FacebookUtils.link(user);
+    alert("Woohoo, user logged in with Facebook!");
+  } catch(error) {}
+    alert("User cancelled the Facebook login or ddid not fully authorize.");
   });
 }
-</code></pre>
+```
 
 The steps that happen when linking are very similar to log in. The difference is that on successful login, the existing `Parse.User` is updated with the Facebook information. Future logins via Facebook will now log the user into their existing account.
 
 If you want to unlink Facebook from a user, simply do this:
 
-<pre><code class="javascript">
-Parse.FacebookUtils.unlink(user, {
-  success: function(user) {
-    alert("The user is no longer associated with their Facebook account.");
-  }
-});
-</code></pre>
+```javascript
+await Parse.FacebookUtils.unlink(user);
+alert("The user is no longer associated with their Facebook account.");
+```
 
 ### Facebook SDK and Parse
 
@@ -414,7 +368,7 @@ Parse allows you to link your users with services like Twitter and Facebook, ena
 
 ### Facebook `authData`
 
-<pre><code class="javascript">
+```javascript
 {
   "facebook": {
     "id": "user's Facebook id number as a string",
@@ -422,12 +376,12 @@ Parse allows you to link your users with services like Twitter and Facebook, ena
     "expiration_date": "token expiration date of the format: yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
   }
 }
-</code></pre>
+```
 Learn more about [Facebook login](https://developers.facebook.com/docs/authentication/).
 
 ### Twitter `authData`
 
-<pre><code class="javascript">
+```javascript
 {
   "twitter": {
     "id": "user's Twitter id number as a string",
@@ -438,25 +392,25 @@ Learn more about [Facebook login](https://developers.facebook.com/docs/authentic
     "auth_token_secret": "the secret associated with the auth_token"
   }
 }
-</code></pre>
+```
 
 Learn more about [Twitter login](https://dev.twitter.com/docs/auth/implementing-sign-twitter).
 
 ### Anonymous user `authData`
 
-<pre><code class="javascript">
+```javascript
 {
   "anonymous": {
     "id": "random UUID with lowercase hexadecimal digits"
   }
 }
-</code></pre>
+```
 
 ### Signing Up and Logging In
 
 Signing a user up with a linked service and logging them in with that service uses the same \_linkWith() mothod, in which the `authData` for the user is specified.  For example, to sign up or log in with a user's Twitter account:
 
-<pre><code class="javascript">
+```javascript
 let myAuthData = {
   "id": "12345678",
   "screen_name": "ParseIt",
@@ -469,17 +423,17 @@ let user = new Parse.User();
 user._linkWith('twitter', myAuthData).then(function(user){
     // user
 });
-</code></pre>
+```
 Parse then verifies that the provided `authData` is valid and checks to see if a user is already associated with this data.  If so, it returns a status code of `200 OK` and the details (including a `sessionToken` for the user):
 
-<pre><code class="javascript">
+```javascript
 Status: 200 OK
 Location: https://YOUR.PARSE-SERVER.HERE/parse/users/uMz0YZeAqc
-</code></pre>
+```
 
 With a response body like:
 
-<pre><code class="json">
+```json
 {
   "username": "Parse",
   "createdAt": "2012-02-28T23:49:36.353Z",
@@ -497,29 +451,29 @@ With a response body like:
     }
   }
 }
-</code></pre>
+```
 If the user has never been linked with this account, you will instead receive a status code of `201 Created`, indicating that a new user was created:
 
-<pre><code class="javascript">
+```javascript
 Status: 201 Created
 Location: https://YOUR.PARSE-SERVER.HERE/parse/users/uMz0YZeAqc
-</code></pre>
+```
 The body of the response will contain the `objectId`, `createdAt`, `sessionToken`, and an automatically-generated unique `username`.  For example:
 
-<pre><code class="json">
+```json
 {
   "username": "iwz8sna7sug28v4eyu7t89fij",
   "createdAt": "2012-02-28T23:49:36.353Z",
   "objectId": "uMz0YZeAqc",
   "sessionToken": "r:samplei3l83eerhnln0ecxgy5"
 }
-</code></pre>
+```
 
 ### Linking
 
 Linking an existing user with a service like Facebook or Twitter uses the same method \_linkWith() to associate `authData` with the user.  For example, linking a user with a Facebook account would use a request like this:
 
-<pre><code class="javascript">
+```javascript
 let myAuthData = {
   id: "123456789",
   "access_token": "SaMpLeAAibS7Q55FSzcERWIEmzn6rosftAr7pmDME10008bWgyZAmv7mziwfacNOhWkgxDaBf8a2a2FCc9Hbk9wAsqLYZBLR995wxBvSGNoTrEaL",
@@ -530,17 +484,17 @@ user.id = "uMz0YZeAqc";
 user._linkWith("facebook", myAuthData).then(function(user){
   // user is linked now
 });
-</code></pre>
+```
 After linking your user to a service, you can authenticate them using matching `authData`.
 
 ### Unlinking
 
 Unlinking an existing user with a service also uses \_linkWith() method to clear `authData` from the user by setting the `authData` for the service to `null`.  For example, unlinking a user with a Facebook account would use a request like this:
 
-<pre><code class="javascript">
+```javascript
 let user = new Parse.User();
 user.id = "uMz0YZeAqc";
 user._linkWith("facebook", {}).then(function(user){
   // user is unlinked now
 });
-</code></pre>
+```

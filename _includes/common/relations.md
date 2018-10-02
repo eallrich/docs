@@ -14,105 +14,120 @@ Let's say we have a game app. The game keeps track of the player's score and ach
 
 Suppose in this game app, we want to make sure that every `Game` object is associated with a Parse User. We can implement this like so:
 
+{% if page.language == "java" %}
 ```java
 ParseObject game = new ParseObject("Game");
 game.put("createdBy", ParseUser.getCurrentUser());
 ```
-{: .common-lang-block .java }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 PFObject *game= [PFObject objectWithClassName:@"Game"];
 [game setObject:[PFUser currentUser] forKey:@"createdBy"];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 let game = PFObject(className:"Game")
 game["createdBy"] = PFUser.currentUser()
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $game = ParseObject::create("Game");
 
 $game->set("createdBy", ParseUser::getCurrentUser());
 ```
-{: .common-lang-block .php }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 var game = new ParseObject("Game");
 game["createdBy"] = ParseUser.CurrentUser;
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "js" %}
 ```js
 var game = new Parse.Object("Game");
 game.set("createdBy", Parse.User.current());
 ```
-{: .common-lang-block .js }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
 We can obtain all of the `Game` objects created by a Parse User with a query:
 
+{% if page.language == "java" %}
 ```java
 ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
 gameQuery.whereEqualTo("createdBy", ParseUser.getCurrentUser());
 ```
-{: .common-lang-block .java }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 PFQuery *gameQuery = [PFQuery queryWithClassName:@"Game"];
 [gameQuery whereKey:@"createdBy" equalTo:[PFUser currentUser]];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 let gameQuery = PFQuery(className:"Game")
 if let user = PFUser.currentUser() {
   gameQuery.whereKey("createdBy", equalTo: user)
 }
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $gameQuery = new ParseQuery("Game");
 
 $gameQuery->equalTo("createdBy", ParseUser::getCurrentUser());
 ```
-{: .common-lang-block .php }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 var query = ParseObject.getQuery("Game").WhereEqualTo("createdBy", ParseUser.CurrentUser);
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "js" %}
 ```js
 var query = new Parse.Query("Game");
 query.equalTo("createdBy", Parse.User.current());
 ```
-{: .common-lang-block .js }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
 And, if we want to find the Parse User who created a specific `Game`, that is a lookup on the `createdBy` key:
 
+{% if page.language == "java" %}
 ```java
 // say we have a Game object
 ParseObject game = ...
@@ -120,26 +135,28 @@ ParseObject game = ...
 // getting the user who created the Game
 ParseUser createdBy = game.getUser("createdBy");
 ```
-{: .common-lang-block .java }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 // say we have a Game object
 PFObject *game = ...
 
 // getting the user who created the Game
 PFUser *createdBy = [game objectForKey@"createdBy"];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 // say we have a Game object
 let game = ...
 
 // getting the user who created the Game
 let createdBy = game["createdBy"]
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 // say we have a Game object
 $game = ...
@@ -147,8 +164,9 @@ $game = ...
 // getting the user who created the Game
 $user = $game->get("createdBy");
 ```
-{: .common-lang-block .php }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 // say we have a Game object
 ParseObject game = ...
@@ -156,8 +174,9 @@ ParseObject game = ...
 // getting the user who created the Game
 ParseUser user = game["createdBy"];
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "js" %}
 ```js
 // say we have a Game object
 var game = ...
@@ -165,17 +184,19 @@ var game = ...
 // getting the user who created the Game
 var user = game.get("createdBy");
 ```
-{: .common-lang-block .js }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
 For most scenarios, Pointers will be your best bet for implementing one-to-many relationships.
 
@@ -189,6 +210,7 @@ Let's start by creating a column on our Parse User object called `weaponsList`.
 
 Now let's store some `Weapon` objects in the `weaponsList`:
 
+{% if page.language == "java" %}
 ```java
 // let's say we have four weapons
 ParseObject scimitar = ...
@@ -206,9 +228,11 @@ weapons.add(bunnyRabbit);
 // store the weapons for the user
 ParseUser.getCurrentUser().put("weaponsList", weapons);
 ```
-{: .common-lang-block .java }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 // let's say we have four weapons
 PFObject *scimitar = ...
 PFObject *plasmaRifle = ...
@@ -220,10 +244,8 @@ NSArray *weapons = @[scimitar, plasmaRifle, grenade, bunnyRabbit];
 
 // store the weapons for the user
 [[PFUser currentUser] setObject:weapons forKey:@weaponsList"];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 // let's say we have four weapons
 let scimitar = ...
 let plasmaRifle = ...
@@ -236,9 +258,11 @@ let weapons = [scimitar, plasmaRifle, grenade, bunnyRabbit]
 // store the weapons for the user
 let user = PFUser.currentUser()
 user["weaponsList"] = weapons
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 // let's say we have four weapons
 $scimitar = ...
@@ -253,8 +277,9 @@ $weapons = [$scimitar, $plasmaRifle, $grenade, $bunnyRabbit];
 $user = ParseUser::getCurrentUser();
 $user->set("weaponsList", weapons);
 ```
-{: .common-lang-block .php }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 // let's say we have four weapons
 var scimitar = ...
@@ -273,8 +298,9 @@ weapons.Add(bunnyRabbit);
 var user = ParseUser.CurrentUser;
 user.AddRangeToList("weaponsList", weapons);
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "js" %}
 ```js
 // let's say we have four weapons
 var scimitar = ...
@@ -289,62 +315,72 @@ var weapons = [scimitar, plasmaRifle, grenade, bunnyRabbit];
 var user = Parse.User.current();
 user.set("weaponsList", weapons);
 ```
-{: .common-lang-block .js }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
 Later, if we want to retrieve the `Weapon` objects, it's just one line of code:
 
+{% if page.language == "java" %}
 ```java
 ArrayList<ParseObject> weapons = ParseUser.getCurrentUser().get("weaponsList");
 ```
-{: .common-lang-block .java }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 NSArray *weapons = [[PFUser currentUser] objectForKey:@"weaponsList"];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 let weapons = PFUser.currentUser()?.objectForKey("weaponsList")
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $weapons = ParseUser::getCurrentUser()->get("weaponsList");
 ```
-{: .common-lang-block .php }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 var weapons = ParseUser.CurrentUser.Get<IList<Object>>("weaponsList");
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "js" %}
 ```js
 var weapons = Parse.User.current().get("weaponsList")
 ```
-{: .common-lang-block .js }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
 Sometimes, we will want to fetch the "many" objects in our one-to-many relationship at the same time as we fetch the "one" object. One trick we could employ is to use the `includeKey` (or `include` in Android) parameter whenever we use a Parse Query to also fetch the array of `Weapon` objects (stored in the `weaponsList` column) along with the Parse User object:
 
+{% if page.language == "java" %}
 ```java
 // set up our query for a User object
 ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
@@ -362,9 +398,11 @@ userQuery.findInBackground(new FindCallback<ParseUser>() {
   }
 });
 ```
-{: .common-lang-block .java }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 // set up our query for a User object
 PFQuery *userQuery = [PFUser query];
 
@@ -379,10 +417,8 @@ PFQuery *userQuery = [PFUser query];
 [userQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
     // objects contains all of the User objects, and their associated Weapon objects, too
 }];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 // set up our query for a User object
 let userQuery = PFUser.query();
 
@@ -398,9 +434,11 @@ userQuery?.findObjectsInBackgroundWithBlock {
     (objects: [AnyObject]?, error: NSError?) -> Void in
     // objects contains all of the User objects, and their associated Weapon objects, too
 }
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 // set up our query for a User object
 $userQuery = ParseUser::query();
@@ -416,8 +454,9 @@ $userQuery->includeKey("weaponsList");
 $results = $userQuery->find();
 // results contains all of the User objects, and their associated Weapon objects, too
 ```
-{: .common-lang-block .php }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 // set up our query for a User object
 var userQuery = ParseUser.Query;
@@ -433,8 +472,9 @@ userQuery = userQuery.Include("weaponsList");
 IEnumerable<ParseUser> results = await userQuery.FindAsync();
 // results contains all of the User objects, and their associated Weapon objects, too
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "js" %}
 ```js
 // set up our query for a User object
 var userQuery = new Parse.Query(Parse.User);
@@ -447,26 +487,26 @@ var userQuery = new Parse.Query(Parse.User);
 userQuery.include("weaponsList");
 
 // execute the query
-userQuery.find({
-  success: function(results){
-    // results contains all of the User objects, and their associated Weapon objects, too
-  }
-});
+// results contains all of the User objects, and their associated Weapon objects, too
+const results = await userQuery.find();
 ```
-{: .common-lang-block .js }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
 You can also get the "one" side of the one-to-many relationship from the "many" side. For example, if we want to find all Parse User objects who also have a given `Weapon`, we can write a constraint for our query like this:
 
+{% if page.language == "java" %}
 ```java
 // add a constraint to query for whenever a specific Weapon is in an array
 userQuery.whereEqualTo("weaponsList", scimitar);
@@ -474,26 +514,28 @@ userQuery.whereEqualTo("weaponsList", scimitar);
 // or query using an array of Weapon objects...
 userQuery.whereEqualTo("weaponsList", arrayOfWeapons);
 ```
-{: .common-lang-block .java }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 // add a constraint to query for whenever a specific Weapon is in an array
 [userQuery whereKey:@"weaponsList" equalTo:scimitar];
 
 // or query using an array of Weapon objects...
 [userQuery whereKey:@"weaponsList" containedIn:arrayOfWeapons];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 // add a constraint to query for whenever a specific Weapon is in an array
 userQuery?.whereKey("weaponsList", equalTo: scimitar);
 
 // or query using an array of Weapon objects...
 userQuery?.whereKey("weaponsList", containedIn: arrayOfWeapons)
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 // add a constraint to query for whenever a specific Weapon is in an array
 $userQuery->equalTo("weaponsList", $scimitar);
@@ -501,8 +543,9 @@ $userQuery->equalTo("weaponsList", $scimitar);
 // or query using an array of Weapon objects...
 $userQuery->containedIn("weaponsList", $arrayOfWeapons);
 ```
-{: .common-lang-block .php }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 // add a constraint to query for whenever a specific Weapon is in an array
 userQuery = userQuery.WhereEqualTo("weaponsList", scimitar);
@@ -510,8 +553,9 @@ userQuery = userQuery.WhereEqualTo("weaponsList", scimitar);
 // or query using an array of Weapon objects...
 userQuery = userQuery.WhereContainedIn("weaponsList", arrayOfWeapons);
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "js" %}
 ```js
 // add a constraint to query for whenever a specific Weapon is in an array
 userQuery.equalTo("weaponsList", scimitar);
@@ -519,17 +563,19 @@ userQuery.equalTo("weaponsList", scimitar);
 // or query using an array of Weapon objects...
 userQuery.containedIn("weaponsList", arrayOfWeapons);
 ```
-{: .common-lang-block .js }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
 ## Many-to-Many
 
@@ -545,6 +591,7 @@ Using Parse Relations, we can create a relationship between a `Book` and a few `
 
 After that, we can associate a few authors with this book:
 
+{% if page.language == "java" %}
 ```java
 // let’s say we have a few objects representing Author objects
 ParseObject authorOne =
@@ -564,9 +611,11 @@ relation.add(authorThree);
 // now save the book object
 book.saveInBackground();
 ```
-{: .common-lang-block .java }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 // let’s say we have a few objects representing Author objects
 PFObject *authorOne = …
 PFObject *authorTwo = …
@@ -584,10 +633,8 @@ PFRelation *relation = [book relationForKey:@"authors"];
 
 // now save the book object
 [book saveInBackground];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 // let’s say we have a few objects representing Author objects
 let authorOne = ...
 let authorTwo = ...
@@ -605,9 +652,11 @@ relation.addObject(authorThree)
 
 // now save the book object
 book.saveInBackground()
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 // let’s say we have a few objects representing Author objects
 $authorOne = ...
@@ -627,8 +676,9 @@ $relation->add($authorThree);
 // now save the book object
 $book->save();
 ```
-{: .common-lang-block .php }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 // let’s say we have a few objects representing Author objects
 var authorOne = ...
@@ -648,8 +698,9 @@ relation.Add(authorThree);
 // now save the book object
 await book.SaveAsync();
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "js" %}
 ```js
 // let’s say we have a few objects representing Author objects
 var authorOne = ...
@@ -669,20 +720,23 @@ relation.add(authorThree);
 // now save the book object
 book.save();
 ```
-{: .common-lang-block .js }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
 To get the list of authors who wrote a book, create a query:
 
+{% if page.language == "java" %}
 ```java
 // suppose we have a book object
 ParseObject book = ...
@@ -695,9 +749,11 @@ ParseQuery query = relation.getQuery();
 
 // now execute the query
 ```
-{: .common-lang-block .java }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 // suppose we have a book object
 PFObject *book = ...
 
@@ -708,10 +764,8 @@ PFRelation *relation = [book relationForKey:@"authors"];
 PFQuery *query = [relation query];
 
 // now execute the query
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 // suppose we have a book object
 let book = ...
 
@@ -722,9 +776,11 @@ let relation = book.relationForKey("authors")
 let query = relation.query()
 
 // now execute the query
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 // suppose we have a book object
 $book = ...
@@ -737,8 +793,9 @@ $query = $relation->getQuery();
 
 // now execute the query
 ```
-{: .common-lang-block .php }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 // suppose we have a book object
 var book = ...
@@ -751,8 +808,9 @@ var query = relation.Query;
 
 // now execute the query
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "js" %}
 ```js
 // suppose we have a book object
 var book = ...
@@ -765,20 +823,23 @@ var query = relation.query();
 
 // now execute the query
 ```
-{: .common-lang-block .js }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
 Perhaps you even want to get a list of all the books to which an author contributed. You can create a slightly different kind of query to get the inverse of the relationship:
 
+{% if page.language == "java" %}
 ```java
 // suppose we have a author object, for which we want to get all books
 ParseObject author = ...
@@ -790,9 +851,11 @@ ParseQuery<ParseObject> query = ParseQuery.getQuery("Book");
 // is contained therein
 query.whereEqualTo("authors", author);
 ```
-{: .common-lang-block .java }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 // suppose we have a author object, for which we want to get all books
 PFObject *author = ...
 
@@ -802,10 +865,8 @@ PFQuery *query = [PFQuery queryWithClassName:@"Book"];
 // now we will query the authors relation to see if the author object
 // we have is contained therein
 [query whereKey:@"authors" equalTo:author];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 // suppose we have a author object, for which we want to get all books
 let author = ...
 
@@ -815,9 +876,11 @@ let query = PFQuery(className: "Book")
 // now we will query the authors relation to see if the author object
 // we have is contained therein
 query?.whereKey("authors", equalTo: author)
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 // suppose we have a author object, for which we want to get all books
 $author = ...
@@ -829,8 +892,9 @@ $query = new ParseQuery("Book");
 // is contained therein
 $query->equalTo("authors", $author);
 ```
-{: .common-lang-block .php }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 // suppose we have a author object, for which we want to get all books
 var author = ...
@@ -842,8 +906,9 @@ var query = ParseObject.GetQuery("Book");
 // is contained therein
 query = query.WhereEqualTo("authors", author);
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "js" %}
 ```js
 // suppose we have a author object, for which we want to get all books
 var author = ...
@@ -855,17 +920,19 @@ var query = new Parse.Query("Book");
 // is contained therein
 query.equalTo("authors", author);
 ```
-{: .common-lang-block .js }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
 ### Using Join Tables
 
@@ -873,6 +940,7 @@ There may be certain cases where we want to know more about a relationship. For 
 
 Now, when you want to save the following relationship between two users, create a row in the `Follow` table, filling in the `from`, `to`, and `date` keys appropriately:
 
+{% if page.language == "java" %}
 ```java
 // suppose we have a user we want to follow
 ParseUser otherUser = ...
@@ -884,9 +952,11 @@ follow.put("to", otherUser);
 follow.put("date", Date());
 follow.saveInBackground();
 ```
-{: .common-lang-block .java }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 // suppose we have a user we want to follow
 PFUser *otherUser = ...
 
@@ -896,10 +966,8 @@ PFObject *follow = [PFObject objectWithClassName:@"Follow"];
 [follow setObject:otherUser forKey:@"to"];
 [follow setObject:[NSDate date] forKey@"date"];
 [follow saveInBackground];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 // suppose we have a user we want to follow
 let otherUser = ...
 
@@ -909,9 +977,11 @@ follow.setObject(PFUser.currentUser()!, forKey: "from")
 follow.setObject(otherUser, forKey: "to")
 follow.setObject(NSDate(), forKey: "date")
 follow.saveInBackground()
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 // suppose we have a user we want to follow
 $otherUser = ...
@@ -923,8 +993,9 @@ $follow->set("to", $otherUser);
 $follow->set("date", new DateTime());
 $follow->save();
 ```
-{: .common-lang-block .php }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 // suppose we have a user we want to follow
 ParseUser otherUser = ...
@@ -936,8 +1007,9 @@ follow["to"] = otherUser;
 follow["date"] = DateTime.UtcNow;
 await follow.SaveAsync();
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "js" %}
 ```js
 var otherUser = ...
 
@@ -948,20 +1020,23 @@ follow.set("to", otherUser);
 follow.set("date", Date());
 follow.save();
 ```
-{: .common-lang-block .js }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
 If we want to find all of the people we are following, we can execute a query on the `Follow` table:
 
+{% if page.language == "java" %}
 ```java
 // set up the query on the Follow table
 ParseQuery<ParseObject> query = ParseQuery.getQuery("Follow");
@@ -974,9 +1049,11 @@ query.findInBackground(newFindCallback<ParseObject>() {
     }
 });
 ```
-{: .common-lang-block .java }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 // set up the query on the Follow table
 PFQuery *query = [PFQuery queryWithClassName:@"Follow"];
 [query whereKey:@"from" equalTo:[PFUser currentUser]];
@@ -992,10 +1069,8 @@ PFQuery *query = [PFQuery queryWithClassName:@"Follow"];
     PFObject *when = [o objectForKey@"date"];
   }
 }];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 // set up the query on the Follow table
 let query = PFQuery(className: "Follow")
 query.whereKey("from", equalTo: PFUser.currentUser()!)
@@ -1014,9 +1089,11 @@ query.findObjectsInBackgroundWithBlock{
         }
     }
 }
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 // set up the query on the Follow table
 $query = new ParseQuery("Follow");
@@ -1025,8 +1102,9 @@ $query->equalTo("from", ParseUser::getCurrentUser());
 // execute the query
 $results = $query->find();
 ```
-{: .common-lang-block .php }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 // set up the query on the Follow table
 ParseQuery<ParseObject> query = ParseQuery.getQuery("Follow");
@@ -1035,31 +1113,31 @@ query = query.WhereEqualTo("from", ParseUser.CurrentUser);
 // execute the query
 IEnumerable<ParseObject> results = await query.FindAsync();
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "js" %}
 ```js
-var query = new Parse.Query("Follow");
+const query = new Parse.Query("Follow");
 query.equalTo("from", Parse.User.current());
-query.find({
-  success: function(users){
-    ...
-  }
-});
+const users = await query.find();
 ```
-{: .common-lang-block .js }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
 It’s also pretty easy to find all the users that are following the current user by querying on the `to` key:
 
+{% if page.language == "java" %}
 ```java
 // set up the query on the Follow table
 ParseQuery<ParseObject> query = ParseQuery.getQuery("Follow");
@@ -1072,9 +1150,11 @@ query.findInBackground(newFindCallback<ParseObject>() {
     }
 });
 ```
-{: .common-lang-block .java }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 // set up the query on the Follow table
 PFQuery *query = [PFQuery queryWithClassName:@"Follow"];
 [query whereKey:@"to" equalTo:[PFUser currentUser]];
@@ -1089,10 +1169,8 @@ PFQuery *query = [PFQuery queryWithClassName:@"Follow"];
     PFObject *when = [o objectForKey@"date"];
   }
 }];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 // set up the query on the Follow table
 let query = PFQuery(className: "Follow")
 query.whereKey("to", equalTo: PFUser.currentUser()!)
@@ -1111,46 +1189,48 @@ query.findObjectsInBackgroundWithBlock{
 
     }
 }
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 // create an entry in the Follow table
 $query = new ParseQuery("Follow");
 $query->equalTo("to", ParseUser::getCurrentUser());
 $results = $query->find();
 ```
-{: .common-lang-block .php }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 // create an entry in the Follow table
 var query = ParseObject.GetQuery("Follow")
     .WhereEqualTo("to", ParseUser.CurrentUser);
 IEnumerable<ParseObject> results = await query.FindAsync();
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "js" %}
 ```js
 // create an entry in the Follow table
-var query = new Parse.Query("Follow");
+const query = new Parse.Query("Follow");
 query.equalTo("to", Parse.User.current());
-query.find({
-  success: function(users){
-    ...
-  }
-});
+const users = query.find();
 ```
-{: .common-lang-block .js }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
 ### Using an Array
 
@@ -1160,6 +1240,7 @@ Suppose we have a book reading app with `Book` and `Author` objects. The `Book` 
 
 Here is how we save a relationship between a `Book` and an `Author`.
 
+{% if page.language == "java" %}
 ```java
 // let's say we have an author
 ParseObject author = ...
@@ -1170,9 +1251,11 @@ ParseObject book = ...
 // add the author to the authors list for the book
 book.put("authors", author);
 ```
-{: .common-lang-block .java }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 // let's say we have an author
 PFObject *author = ...
 
@@ -1181,10 +1264,8 @@ PFObject *book = ...
 
 // add the author to the authors list for the book
 [book addObject:author forKey:@"authors"];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 // let's say we have an author
 let author = ...
 
@@ -1193,9 +1274,11 @@ let book = ...
 
 // add the author to the authors list for the book
 book.addObject(author, forKey: "authors")
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 // let's say we have an author
 $author = ...
@@ -1206,8 +1289,9 @@ $book = ...
 // add the author to the authors list for the book
 $book->addUnique("authors", array($author));
 ```
-{: .common-lang-block .php }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 // let's say we have an author
 var author = ...
@@ -1218,8 +1302,9 @@ var book = ...
 // add the author to the authors list for the book
 book.AddToList("authors", author);
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "js" %}
 ```js
 // let's say we have an author
 var author = ...
@@ -1230,20 +1315,23 @@ var book = ...
 // add the author to the authors list for the book
 book.add("authors", author);
 ```
-{: .common-lang-block .js }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
 Because the author list is an Array, you should use the `includeKey` (or `include` on Android) parameter when fetching a `Book` so that Parse returns all the authors when it also returns the book:
 
+{% if page.language == "java" %}
 ```java
 // set up our query for the Book object
 ParseQuery bookQuery = ParseQuery.getQuery("Book");
@@ -1258,9 +1346,11 @@ bookQuery.findInBackground(newFindCallback<ParseObject>() {
     }
 });
 ```
-{: .common-lang-block .java }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 // set up our query for the Book object
 PFQuery *bookQuery = [PFQuery queryWithClassName:@"Book"];
 
@@ -1273,10 +1363,8 @@ PFQuery *bookQuery = [PFQuery queryWithClassName:@"Book"];
     // objects is all of the Book objects, and their associated
     // Author objects, too
 }];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 // set up our query for the Book object
 let bookQuery = PFQuery(className: "Book")
 
@@ -1290,9 +1378,11 @@ bookQuery.findObjectsInBackgroundWithBlock{
     // objects is all of the Book objects, and their associated
     // Author objects, too
 }
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 // set up our query for the Book object
 $bookQuery = new ParseQuery("Book");
@@ -1304,8 +1394,9 @@ $bookQuery->includeKey("authors");
 // execute the query
 $books= $bookQuery->find();
 ```
-{: .common-lang-block .php }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 // set up our query for the Book object
 var bookQuery = ParseObject.GetQuery("Book");
@@ -1317,79 +1408,86 @@ bookQuery = bookQuery.Include("authors");
 // execute the query
 IEnumerable<ParseObject> books= await bookQuery.FindAsync();
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "js" %}
 ```js
 // set up our query for the Book object
-var bookQuery = new Parse.Query("Book");
+cosnt bookQuery = new Parse.Query("Book");
 
 // configure any constraints on your query...
 // tell the query to fetch all of the Author objects along with the Book
 bookQuery.include("authors");
 
 // execute the query
-bookQuery.find({
-  success: function(books){
-    ...
-  }
-});
+const books = await bookQuery.find();
 ```
-{: .common-lang-block .js }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
 At that point, getting all the `Author` objects in a given `Book` is a pretty straightforward call:
 
+{% if page.language == "java" %}
 ```java
 ArrayList<ParseObject> authorList = book.getList("authors");
 ```
-{: .common-lang-block .java }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 NSArray *authorList = [book objectForKey@"authors"];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 let authorList = book.objectForKey("authors") as? NSArray
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 $authorList = $book->get("authors");
 ```
-{: .common-lang-block .php }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 var authorList = book.Get<List<ParseObject>>("authors");
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "js" %}
 ```js
 var authorList = book.get("authors")
 ```
-{: .common-lang-block .js }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
 Finally, suppose you have an `Author` and you want to find all the `Book` objects in which she appears. This is also a pretty straightforward query with an associated constraint:
 
+{% if page.language == "java" %}
 ```java
 // set up our query for the Book object
 ParseQuery bookQuery = ParseQuery.getQuery("Book");
@@ -1407,9 +1505,11 @@ bookQuery.findInBackground(newFindCallback<ParseObject>() {
     }
 });
 ```
-{: .common-lang-block .java }
+{% endif %}
 
-<pre><code class="objectivec">
+{% if page.language == "objective_c-swift" %}
+<div class="language-toggle" markdown="1">
+```objective_c
 // suppose we have an Author object
 PFObject *author = ...
 
@@ -1426,10 +1526,8 @@ PFQuery *bookQuery = [PFQuery queryWithClassName:@"Book"];
 [bookQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
     // objects is all of the Book objects, and their associated Author objects, too
 }];
-</code></pre>
-{: .common-lang-block .objectivec }
-
-<pre><code class="swift">
+```
+```swift
 // suppose we have an Author object
 let author = ...
 
@@ -1447,9 +1545,11 @@ bookQuery.findObjectsInBackgroundWithBlock{
 	(objects: [AnyObject]?, error: NSError?) -> Void in
     // objects is all of the Book objects, and their associated Author objects, too
 }
-</code></pre>
-{: .common-lang-block .swift }
+```
+</div>
+{% endif %}
 
+{% if page.language == "php" %}
 ```php
 // set up our query for the Book object
 $bookQuery = new ParseQuery("Book");
@@ -1463,8 +1563,9 @@ $bookQuery->includeKey("authors");
 // execute the query
 $books = $bookQuery->find();
 ```
-{: .common-lang-block .php }
+{% endif %}
 
+{% if page.language == "cs" %}
 ```cs
 // set up our query for the Book object
 var bookQuery = ParseObject.GetQuery("Book");
@@ -1478,8 +1579,9 @@ bookQuery = bookQuery.Include("authors");
 // execute the query
 IEnumerable<ParseObject> books = await bookQuery.FindAsync();
 ```
-{: .common-lang-block .cs }
+{% endif %}
 
+{% if page.language == "js" %}
 ```js
 // set up our query for the Book object
 var bookQuery = new Parse.Query("Book");
@@ -1491,23 +1593,21 @@ bookQuery.equalTo("authors", author);
 bookQuery.include("authors");
 
 // execute the query
-bookQuery.find({
-  success: function(books){
-    ...
-  }
-});
+const books = await bookQuery.find();
 ```
-{: .common-lang-block .js }
+{% endif %}
 
+{% if page.language == "bash" %}
 ```bash
 # No REST API example
 ```
-{: .common-lang-block .bash }
+{% endif %}
 
+{% if page.language == "cpp" %}
 ```cpp
 // No C++ example
 ```
-{: .common-lang-block .cpp }
+{% endif %}
 
 ## One-to-One
 
